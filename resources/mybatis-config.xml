@@ -8,6 +8,13 @@
 		<setting name="mapUnderscoreToCamelCase" value="true"/>
 	</settings>
 	
+	
+	<!-- pagehelper插件 -->
+	<plugins>
+	  <plugin interceptor="com.github.pagehelper.PageInterceptor">
+	  </plugin>
+	</plugins>
+	
 	<!-- 如果在Spring里已配置了mapper，则这里不要重复配置，会抛异常 -->
 <!-- 	<mappers> -->
 <!-- 		<mapper resource="mapper/EmployeeMapper.xml"/> -->
