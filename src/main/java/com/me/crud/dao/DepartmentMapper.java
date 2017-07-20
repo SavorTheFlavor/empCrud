@@ -1,7 +1,11 @@
 package com.me.crud.dao;
 
+import org.springframework.stereotype.Repository;
+
 import com.me.crud.bean.Department;
 
+
+@Repository
 public interface DepartmentMapper {
     int deleteByPrimaryKey(Integer id);
 

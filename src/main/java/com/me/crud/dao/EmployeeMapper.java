@@ -2,8 +2,11 @@ package com.me.crud.dao;
 
 import java.util.List;
 
+import org.springframework.stereotype.Repository;
+
 import com.me.crud.bean.Employee;
 
+@Repository
 public interface EmployeeMapper {
     int deleteByPrimaryKey(Integer id);
 

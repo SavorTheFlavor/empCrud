@@ -1,5 +1,8 @@
 package com.me.crud.bean;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class Employee {
     private Integer id;
 
