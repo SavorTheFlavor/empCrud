@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<jsp:forward page="/emplist"></jsp:forward>
+<jsp:forward page="employee/list/1"></jsp:forward>
 <!DOCTYPE html>
 <html>
 <head>

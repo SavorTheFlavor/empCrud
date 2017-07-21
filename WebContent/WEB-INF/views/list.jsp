@@ -30,8 +30,8 @@
 		</div>
 		<div class="row">
 			<div class="col-md-4 col-md-offset-8">
-				<button class="btn btn-primary">Create</button>
-				<button class="btn btn-danger">Delete</button>
+				<button class="btn btn-primary btn-lg" >Create</button>
+				<button class="btn btn-danger btn-lg">Delete</button>
 			</div>
 		</div>
 		<div class="row">
@@ -43,15 +43,16 @@
 						<th>gender</th>
 						<th>email</th>
 						<th>departmentName</th>
+						<th>operate</th>
 					</tr>
 					
+					<c:forEach items="${pageInfo.list}" var="emp">
 					<tr>
-						<td>1</td>
-						<td>jack</td>
-						<td>male</td>
-						<td>aweaw@qq.com</td>
-						<td>yahoo</td>
-						
+						<td>${emp.id }</td>
+						<td>${emp.name}</td>
+						<td>${emp.gender =="f"?"female":"male"}</td>
+						<td>${emp.email}</td>
+						<td>${emp.department.name}</td>
 						<td>
 								<button class="btn btn-primary btn-sm">
 									Create
@@ -62,11 +63,17 @@
 								<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
 								</button>
 						</td>
-					</tr>					
+					</tr>	
+					</c:forEach>				
 				
 				</table>
 			
 			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-1">total records:${pageInfo.total}</div>
+			<div class="col-md-1">total pages:${pageInfo.pages}</div>
+			<div class="col-md-1">current page:${pageInfo.pageNum}</div>
 		</div>
 		<div class="row">
 			<div class="col-md-6"></div>
@@ -75,22 +82,30 @@
 			<div class="col-md-6">
 				<nav aria-label="Page navigation">
 					  <ul class="pagination">
-					    <li>
-					      <a href="#" aria-label="Previous">
-					        <span aria-hidden="true">&laquo;</span>
-					      </a>
-					    </li>
-					    <li><a href="#">first</a></li>
-					    <li><a href="#">1</a></li>
-					    <li><a href="#">2</a></li>
-					    <li><a href="#">3</a></li>
-					    <li><a href="#">4</a></li>
-					    <li><a href="#">last</a></li>
-					    <li>
-					      <a href="#" aria-label="Next">
-					        <span aria-hidden="true">&raquo;</span>
-				      </a>
-				    </li>
+					  <c:if test="${pageInfo.hasPreviousPage}">
+						    <li>
+						      <a href="${APP_PATH}/employee/list/${pageInfo.pageNum - 1}" aria-label="Previous">
+						        <span aria-hidden="true">&laquo;</span>
+						      </a>
+						    </li>
+					    </c:if>
+					    <li><a href="${APP_PATH}/employee/list/1">first</a></li>
+					    <c:forEach items="${pageInfo.navigatepageNums}" var="pageNum" >
+					    	<c:if test="${pageNum == pageInfo.pageNum}">
+					    		<li class="active"><a href="${APP_PATH}/employee/list/${pageNum}">${pageNum}</a></li>
+					    	</c:if>
+					    	<c:if test="${pageNum != pageInfo.pageNum}">
+					    		<li><a href="${APP_PATH}/employee/list/${pageNum}">${pageNum}</a></li>
+					    	</c:if>
+					    </c:forEach>
+					    <li><a href="${APP_PATH}/employee/list/${pageInfo.pages}">last</a></li>
+					     <c:if test="${pageInfo.hasNextPage}">
+						    <li>
+						      <a href="${APP_PATH}/employee/list/${pageInfo.pageNum + 1}" aria-label="Next">
+						        <span aria-hidden="true">&raquo;</span>
+						      </a>
+						    </li>
+				        </c:if>
 				  </ul>
 				</nav>	
 					

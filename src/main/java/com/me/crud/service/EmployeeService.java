@@ -17,5 +17,15 @@ public class EmployeeService {
 	public List<Employee> getEmployees(){
 		return employeeMapper.selectWithDeparment(null);
 	}
+
+	public EmployeeMapper getEmployeeMapper() {
+		return employeeMapper;
+	}
+
+	public void setEmployeeMapper(EmployeeMapper employeeMapper) {
+		this.employeeMapper = employeeMapper;
+	}
+	
+	
 	
 }

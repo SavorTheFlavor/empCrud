@@ -17,11 +17,19 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.github.pagehelper.PageInfo;
 import com.me.crud.bean.Employee;
+import com.me.crud.controller.EmployeeController;
+import com.me.crud.service.EmployeeService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"classpath:applicationContext.xml","classpath:dispacherServlet-servlet.xml"})
+@ContextConfiguration(locations={"classpath:applicationContext.xml","classpath:springmvc.xml"})
 @WebAppConfiguration
 public class MVCTest {
+	
+//	@Autowired
+//	private EmployeeService employeeService;
+//	
+//	@Autowired
+//	private EmployeeController employeeController;
 	
 	@Autowired
 	WebApplicationContext webApplicationContext;//springmvc的ioc
