@@ -11,6 +11,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.me.crud.bean.Department;
 import com.me.crud.bean.Employee;
 import com.me.crud.controller.EmployeeController;
 import com.me.crud.dao.DepartmentMapper;
@@ -42,13 +43,14 @@ public class MapperTest {
 	@Test
 	public void insertTest(){
 		Employee e = new Employee();
-//		for (int i = 0; i < 20; i++) {
-//			e.setName("biu"+i);
-//			e.setGender("f");
-//			e.setEmail("sadsada");
-//			e.setId(30+i);
-//			employeeMapper.insertSelective(e);
-//		}
+		for (int i = 0; i < 25; i++) {
+			e.setName("biu"+i*i);
+			e.setGender("f");
+			e.setEmail("doge"+i*i*i);
+			e.setId(i);
+			e.setDepartmentId(1);
+			employeeMapper.insertSelective(e);
+		}
 
 		
 		//employeeMapper.insertSelective(e);
