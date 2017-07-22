@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.me.crud.bean.Employee;
 import com.me.crud.dao.EmployeeMapper;
+import com.me.crud.util.Message;
 
 @Service
 public class EmployeeService {
@@ -17,13 +18,14 @@ public class EmployeeService {
 	public List<Employee> getEmployees(){
 		return employeeMapper.selectWithDeparment(null);
 	}
-
-	public EmployeeMapper getEmployeeMapper() {
-		return employeeMapper;
-	}
-
-	public void setEmployeeMapper(EmployeeMapper employeeMapper) {
-		this.employeeMapper = employeeMapper;
+	
+	public Message insert(Employee e){
+		try{
+			  employeeMapper.insertSelective(e);
+		}catch(Exception exception){
+			return Message.failure().addObject("errormsg", exception.getMessage());
+		}
+		return Message.success();
 	}
 	
 	

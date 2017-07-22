@@ -1,5 +1,7 @@
 package com.me.crud.dao;
 
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
 
 import com.me.crud.bean.Department;
@@ -14,6 +16,8 @@ public interface DepartmentMapper {
     int insertSelective(Department record);
 
     Department selectByPrimaryKey(Integer id);
+    
+    List<Department> selectByExample(Department department);
 
     int updateByPrimaryKeySelective(Department record);
 

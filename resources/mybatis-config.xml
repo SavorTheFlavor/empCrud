@@ -12,6 +12,8 @@
 	<!-- pagehelper插件 -->
 	<plugins>
 	  <plugin interceptor="com.github.pagehelper.PageInterceptor">
+	  	<!-- 分页合理化 -->
+	  	<property name="reasonable" value="true"/>
 	  </plugin>
 	</plugins>
 	

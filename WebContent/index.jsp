@@ -30,10 +30,71 @@
 		</div>
 		<div class="row">
 			<div class="col-md-4 col-md-offset-8">
-				<button class="btn btn-primary btn-lg" >Create</button>
+				<button class="btn btn-primary btn-lg" id="emp_create" >Create</button>
 				<button class="btn btn-danger btn-lg">Delete</button>
 			</div>
 		</div>
+		
+		<!-- 新增的模态框 -->
+		<div class="modal fade" tabindex="-1" role="dialog" id="create_modal">
+		  <div class="modal-dialog" role="document">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		        <h4 class="modal-title">new employee.....</h4>
+		      </div>
+		      <div class="modal-body">
+		       
+		        <!-- 表单 -->
+		        <form class="form-horizontal" id="empInfo">
+		        <div class="form-group">
+				    <label for="inputName" class="col-sm-2 control-label">name</label>
+				    <div class="col-sm-10">
+				      <input type="text" class="form-control" name="name" id="inputName" placeholder="name">
+				    </div>
+				  </div>
+				  <div class="form-group">
+				    <label for="inputEmail" class="col-sm-2 control-label">email</label>
+				    <div class="col-sm-10">
+				      <input type="email" class="form-control" name="email" id="inputEmail" placeholder="Email">
+				    </div>
+				  </div>
+				  
+				  <div class="form-group">
+					  <label class="radio-inline col-sm-offset-2">
+						  <input type="radio" name="gender" id="inlineRadiobox1" value="f"> female
+						</label>
+						<label class="checkbox-inline " >
+						  <input type="radio" name="gender" id="inlineRadiobox2" value="m"> male
+						</label>
+					 </div>
+		
+					<div class="form-group">
+					  	<label for="inputEmail" class="col-sm-2 control-label">department</label>
+				  		<div class="col-sm-4 col-sm-offest-5" >
+					  		<select id="deptList" class="form-control" name="departmentId">
+							</select>
+						</div>
+					</div>
+					
+				</form>
+		        
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		        <button type="button" class="btn btn-primary" id="savebtn">Save</button>
+		      </div>
+		    </div><!-- /.modal-content -->
+		  </div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+		
+		
+		
+		
+		
+		
+		
+		
 			<!--表格数据-->
 		<div class="row">
 			<div class="col-md-12">
@@ -75,9 +136,55 @@
     
     
     <script type="text/javascript">
+    
+    	var totalRecord;
+    	
     	$(function(){
+    		bindingEvent();
     		to_page(1);
+    		
     	});
+    	
+    	function bindingEvent(){
+    		//设置部门信息
+    		setDepts();
+    		//绑定create button的模态框事件
+    		$("#emp_create").click(function(){
+    			$("#create_modal").modal({
+    				backdrop:'static'
+    			})
+    		});
+    		//绑定提交事件
+    		$("#savebtn").click(function(){
+ 
+	    			$.ajax({
+	    				url:"${APP_PATH}/employee/save",
+	    				type:"POST",
+	    				data: $('#empInfo').serialize(),				
+	    				success:function(result){
+	    					//关闭模态框
+	    					$("#create_modal").modal('hide');
+	    					//到最后一页,设置reasonable属性为true后，传个很大的数就行了，pageInfo自动定位到最后一页
+	    					to_page(totalRecord);//以总记录数作为页数...
+	    				}
+	    			});
+    		});
+    	}
+    	
+    	function setDepts(){
+    		
+    		$.get("${APP_PATH}/department/list",function(result){
+    			
+    			var depts = result.data.depts;
+    			var deptsel = $('#deptList');
+    			depts.forEach(function(val){
+    				$('<option></option>').append(val.name).attr("value",val.id).appendTo(deptsel);
+    			});
+    			
+    			
+    		})
+    		
+    	}
     	
     	//翻页事件方法
 		function to_page(pn) {
@@ -147,7 +254,7 @@
 					"current page:" + result.data.pageInfo.pageNum + ",   total pages:"
 							+ result.data.pageInfo.pages + ",  total records:"
 							+ result.data.pageInfo.total );
-		 totalRecord=result.data.pageInfo.total; //赋值为总记录数
+		 totalRecord=result.data.pageInfo.total; //保存总记录数
 		 currentPage = result.data.pageInfo.pageNum;
 		}
 		
@@ -170,7 +277,8 @@
 				to_page(1);
 			})
 			prePageLi.click(function() {
-				to_page(result.data.pageInfo.pageNum - 1);
+				if(result.data.pageInfo.pageNum > 1)
+					to_page(result.data.pageInfo.pageNum - 1);
 			})
 			var nextPageLi = $("<li></li>").append(
 					$("<a></a>").append("&raquo;").attr("href", "#"));

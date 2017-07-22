@@ -23,6 +23,13 @@ public class Message {
 		return msg;
 	}
 	
+	public static Message failure(){
+		Message msg = new Message();
+		msg.setState(500);
+		msg.setMsg("failed!!!");
+		return msg;
+	}
+	
 	public int getState() {
 		return state;
 	}

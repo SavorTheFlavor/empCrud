@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.me.crud.dao.DepartmentMapper">
-   <!-- <resultMap id="BaseResultMap" type="com.me.crud.bean.Department">
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="name" jdbcType="VARCHAR" property="name" />
-  </resultMap> -->
+   <resultMap id="BaseResultMap" type="com.me.crud.bean.Department">
+    <id column="dept_id" jdbcType="INTEGER" property="id" />
+    <result column="dept_name" jdbcType="VARCHAR" property="name" />
+  </resultMap>
 
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultType="com.me.crud.bean.Department">
     select 
@@ -12,6 +12,20 @@
     from dept
     where id = #{id,jdbcType=INTEGER}
   </select>
+  
+  <select id="selectByExample" parameterType="com.me.crud.bean.Department" resultMap="BaseResultMap">
+  	select id dept_id, name dept_name from dept
+  	<where>
+  		<if test="id != null">
+  			and dept_id=#{id}
+  		</if>
+  		<if test="name != null and !&quot;&quot;.equals(name.trim())">
+  			and dept_name=#{name}
+  		</if>
+  	</where>
+  		order by dept_name
+  </select>
+  
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from dept
     where id = #{id,jdbcType=INTEGER}
