@@ -1,15 +1,20 @@
 package com.me.crud.bean;
 
+import javax.validation.constraints.Pattern;
+
+import org.hibernate.validator.constraints.Email;
 import org.springframework.stereotype.Component;
 
 @Component
 public class Employee {
     private Integer id;
 
+    @Pattern(regexp="(^[a-zA-Z0-9_-]{2,16}$)|(^[\u2E80-\u9FFF]{1,5}[0-9a-zA-Z]*)",message="用户名不合法")
     private String name;
 
     private String gender;
 
+    @Email(message="格式不对")
     private String email;
 
     private Integer departmentId;

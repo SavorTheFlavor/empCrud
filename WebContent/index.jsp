@@ -179,10 +179,14 @@
     				type:"POST",
     				data: $('#empInfo').serialize(),				
     				success:function(result){
-    					//关闭模态框
-    					$("#create_modal").modal('hide');
-    					//到最后一页,设置reasonable属性为true后，传个很大的数就行了，pageInfo自动定位到最后一页
-    					to_page(totalRecord);//以总记录数作为页数...
+    					if(result.state == 200){
+	    					//关闭模态框
+	    					$("#create_modal").modal('hide');
+	    					//到最后一页,设置reasonable属性为true后，传个很大的数就行了，pageInfo自动定位到最后一页
+	    					to_page(totalRecord);//以总记录数作为页数...    						
+    					}else{
+    						alert("信息填写错误，自己认真检查一下，烦啊")
+    					}
     				}
     			});
     		});

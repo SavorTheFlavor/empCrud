@@ -4,9 +4,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -30,8 +33,12 @@ public class EmployeeController {
 	
 	//PUT是idempotent的，save操作显然不是幂等的？
 	@RequestMapping(value="/save",method=RequestMethod.POST)
-	public @ResponseBody Message save(Employee employee){
-		return employeeService.insert(employee);
+	public @ResponseBody Message save(@Valid Employee employee, BindingResult result){
+		if(result.hasErrors()){
+			return Message.failure().addObject("errormsg", result.getFieldErrors());
+		}else{
+			return employeeService.insert(employee);
+		}
 	}
 	
 	@RequestMapping("/list/{pn}")
