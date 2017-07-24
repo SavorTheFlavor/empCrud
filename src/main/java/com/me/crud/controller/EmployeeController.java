@@ -1,5 +1,7 @@
 package com.me.crud.controller;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.me.crud.bean.Employee;
+import com.me.crud.dao.EmployeeMapper;
 import com.me.crud.service.EmployeeService;
 import com.me.crud.util.Message;
 
@@ -43,5 +46,40 @@ public class EmployeeController {
 		return Message.success().addObject("pageInfo",pageInfo);
 	}
 	
+	
+	@RequestMapping(value="/email",method=RequestMethod.POST)
+	public @ResponseBody Message checkEmail(@RequestParam("email") String email){
+		
+		if(employeeService.isEmailExist(email)){
+			return Message.failure().addObject("msg", "邮箱不可用");
+		}else{
+			return Message.success();
+		}
+	}
+	
+	/**
+	 * 检查用户名是否可用
+	 * @param empName
+	 * @return
+	 */
+/*	@ResponseBody
+	@RequestMapping("/checkuser")
+	public Message checkuser(@RequestParam("empName")String empName){
+		//先判断用户名是否是合法的表达式
+		String regx="(^[a-zA-Z0-9_-]{6,16}$)|(^[\u2E80-\u9FFF]{2,5})";
+		
+		if(!(empName.matches(regx))){
+			System.out.println("不可用");
+			return Message.failure().addObject("va_msg","用户名必须是6-16位数字和字母的组合或者2-5位中文");
+		}
+		
+		//数据库用户名重复校验
+		boolean b =employeeService.checkUser(empName);
+		if(b){
+			return Message.success();
+		}else{
+			return Message.failure().addObject("va_msg", "用户名不可用");
+		}
+	}*/
 	
 }

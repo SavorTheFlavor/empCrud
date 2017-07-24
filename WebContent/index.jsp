@@ -51,21 +51,23 @@
 				    <label for="inputName" class="col-sm-2 control-label">name</label>
 				    <div class="col-sm-10">
 				      <input type="text" class="form-control" name="name" id="inputName" placeholder="name">
+				      <span  class="help-block"></span>
 				    </div>
 				  </div>
 				  <div class="form-group">
 				    <label for="inputEmail" class="col-sm-2 control-label">email</label>
 				    <div class="col-sm-10">
 				      <input type="email" class="form-control" name="email" id="inputEmail" placeholder="Email">
+				    <span  class="help-block"></span>
 				    </div>
 				  </div>
 				  
 				  <div class="form-group">
 					  <label class="radio-inline col-sm-offset-2">
-						  <input type="radio" name="gender" id="inlineRadiobox1" value="f"> female
+						  <input type="radio" name="gender" id="gender1" value="f" checked> female
 						</label>
 						<label class="checkbox-inline " >
-						  <input type="radio" name="gender" id="inlineRadiobox2" value="m"> male
+						  <input type="radio" name="gender" id="gender2" value="m"> male
 						</label>
 					 </div>
 		
@@ -140,36 +142,118 @@
     	var totalRecord;
     	
     	$(function(){
-    		bindingEvent();
+    		bindingEvents();
     		to_page(1);
     		
     	});
     	
-    	function bindingEvent(){
+    	function bindingEvents(){
+    		
     		//设置部门信息
     		setDepts();
     		//绑定create button的模态框事件
     		$("#emp_create").click(function(){
+    			//重置表单
+        		reset_form('#empInfo');
+    			
     			$("#create_modal").modal({
     				backdrop:'static'
     			})
     		});
     		//绑定提交事件
     		$("#savebtn").click(function(){
+    			
+    			//前端校验
+    			if(!validate_create_form()){
+    				return false;
+    			}
+    			//ajax校验
+    			validate_create_form_ajax();
+    			var flag = $('#inputEmail').attr("ajax-check");
+    			if(flag != "success"){
+    				return false
+    			}
  
-	    			$.ajax({
-	    				url:"${APP_PATH}/employee/save",
-	    				type:"POST",
-	    				data: $('#empInfo').serialize(),				
-	    				success:function(result){
-	    					//关闭模态框
-	    					$("#create_modal").modal('hide');
-	    					//到最后一页,设置reasonable属性为true后，传个很大的数就行了，pageInfo自动定位到最后一页
-	    					to_page(totalRecord);//以总记录数作为页数...
-	    				}
-	    			});
+    			$.ajax({
+    				url:"${APP_PATH}/employee/save",
+    				type:"POST",
+    				data: $('#empInfo').serialize(),				
+    				success:function(result){
+    					//关闭模态框
+    					$("#create_modal").modal('hide');
+    					//到最后一页,设置reasonable属性为true后，传个很大的数就行了，pageInfo自动定位到最后一页
+    					to_page(totalRecord);//以总记录数作为页数...
+    				}
+    			});
     		});
     	}
+    	
+    	function reset_form(ele){
+    		$(ele)[0].reset();
+    		$(ele).find("*").removeClass("has-error has-success");
+    		$(ele).find(".help-block").text("")
+    	}
+    	
+    	function validate_create_form_ajax(){
+    		
+    		//只校验邮箱是否重复
+    		var empEmail = $("#inputEmail").val();
+    		$.ajax({
+    			url:"${APP_PATH}/employee/email",
+    			data:{
+    				email:empEmail
+    			},
+    			type:"POST",
+    			success:function(result){
+    				if(result.state == 200){
+    					show_validate_msg("#inputEmail","success","邮箱可用啊");
+    					$('#inputEmail').attr("ajax-check","success");
+    				}else{
+    					show_validate_msg("#inputEmail","error","邮箱已被注册！");
+    					$('#inputEmail').attr("ajax-check","fail");
+    				}
+    			}
+    		})
+    		
+    	}
+    	
+    	function validate_create_form(){
+    		var empName = $("#inputName").val();
+    		var regName =  /(^[a-zA-Z0-9_-]{2,16}$)|(^[\u2E80-\u9FFF]{1,5}[0-9a-zA-Z]*)/;
+    		var empEmail = $("#inputEmail").val();
+    		var regEmail = /\w{1,}@\w{1,}\.\w{1,}/;
+    		if(!regName.test(empName)){
+				show_validate_msg("#inputName","error","根据相关法律法规 相关输入结果不予注册");
+				return false;
+			}else{
+				show_validate_msg("#inputName","success"," ");
+			}
+    		if(!regEmail.test(empEmail)){
+    			//	alert("邮箱格式不正确");
+    			//应该清空这个元素之前的样式
+    				show_validate_msg("#inputEmail","error","邮箱错了");
+    				return false;
+    			}else{
+    				show_validate_msg("#inputEmail","success"," ");
+    				return true;
+    				
+    			}
+    
+    	}
+    	
+    	function show_validate_msg(ele,status,msg){
+			//清除当前元素的检验状态
+			$(ele).parent().removeClass("has-success has-error");
+			$(ele).next("span").text(" ");
+			if("success"==status){
+				$(ele).parent().addClass("has-success");
+				$(ele).next("span").text(msg);
+				
+			}else if("error"==status){
+				$(ele).parent().addClass("has-error");
+				$(ele).next("span").text(msg);
+			}
+		}
     	
     	function setDepts(){
     		

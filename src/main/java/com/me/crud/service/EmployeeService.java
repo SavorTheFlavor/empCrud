@@ -27,6 +27,17 @@ public class EmployeeService {
 		}
 		return Message.success();
 	}
+
+	public boolean isEmailExist(String email) {
+		Employee e = new Employee();
+		e.setEmail(email);
+		List<Employee> emps = employeeMapper.selectWithDeparment(e);
+		if(emps == null || emps.size() <= 0){
+			return false;
+		}
+		return true;
+		
+	}
 	
 	
 	
