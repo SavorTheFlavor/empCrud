@@ -27,6 +27,14 @@ public class EmployeeService {
 		}
 		return Message.success();
 	}
+	
+	public Employee getEmployee(Integer id) {
+		return employeeMapper.selectByPrimaryKey(id);
+	}
+	
+	public int update(Employee record){
+		return employeeMapper.updateByPrimaryKeySelective(record);
+	}
 
 	public boolean isEmailExist(String email) {
 		Employee e = new Employee();
@@ -38,6 +46,8 @@ public class EmployeeService {
 		return true;
 		
 	}
+
+
 	
 	
 	

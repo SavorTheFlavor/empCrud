@@ -91,8 +91,60 @@
 		</div><!-- /.modal -->
 		
 		
+		<!-- 修改的模态框 -->
+		<div class="modal fade" tabindex="-1" role="dialog" id="update_modal">
+		  <div class="modal-dialog" role="document">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		        <h4 class="modal-title">update employee.....</h4>
+		      </div>
+		      <div class="modal-body">
+		       
+		        <!-- 表单 -->
+		        <form class="form-horizontal" id="empInfo_update">
+		        <div class="form-group">
+				    <label for="updateName" class="col-sm-2 control-label">name</label>
+				    <div class="col-sm-10">
+				       <p class="form-control-static" id="updateName"></p>
+				      <span  class="help-block"></span>
+				    </div>
+				  </div>
+				  <div class="form-group">
+				    <label for="updateEmail" class="col-sm-2 control-label">email</label>
+				    <div class="col-sm-10">
+				      <input type="email" class="form-control" name="email" id="updateEmail" placeholder="Email"/>
+				    <span  class="help-block"></span>
+				    </div>
+				  </div>
+				  
+				  <div class="form-group">
+					  <label class="radio-inline col-sm-offset-2">
+						  <input type="radio" name="gender" id="gender_update1" value="f" checked> female
+						</label>
+						<label class="checkbox-inline " >
+						  <input type="radio" name="gender" id="gender_update2" value="m"> male
+						</label>
+					 </div>
 		
-		
+					<div class="form-group">
+					  	<label for="inputEmail" class="col-sm-2 control-label">department</label>
+				  		<div class="col-sm-4 col-sm-offest-5" >
+					  		<select id="deptList2" class="form-control" name="departmentId">
+							</select>
+						</div>
+					</div>
+					
+				</form>
+		        
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		        <button type="button" class="btn btn-primary" id="updatebtn">Save</button>
+		      </div>
+		    </div><!-- /.modal-content -->
+		  </div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
 		
 		
 		
@@ -139,20 +191,19 @@
     
     <script type="text/javascript">
     
-    	var totalRecord;
+    	var totalRecord,currentPage;
     	
     	$(function(){
     		bindingEvents();
     		to_page(1);
-    		
     	});
     	
     	function bindingEvents(){
     		
-    		//设置部门信息
-    		setDepts();
     		//绑定create button的模态框事件
     		$("#emp_create").click(function(){
+    		//设置部门信息
+	    		setDepts( "#deptList");
     			//重置表单
         		reset_form('#empInfo');
     			
@@ -160,7 +211,33 @@
     				backdrop:'static'
     			})
     		});
-    		//绑定提交事件
+    		
+    		//绑定update button的模态框事件
+    			//由于是动态创建的button，一般的方法绑不上，因为元素还未被创建
+    			//可使用jQuery的on为后来的元素绑定事件
+    		$(document).on("click",".edit_btn",function(){
+    			
+    			setDepts( "#deptList2");
+    			var empid = $(this).attr("edit-id");
+    			
+    			$.get("${APP_PATH}/employee/info/"+empid,function(result){
+    				var employee = result.data.emp;
+    				$("#updateName").text(employee.name);
+    				$("#updateEmail").val(employee.email);
+    				$("#empInfo_update input[name=gender]").val([employee.gender]);
+    				$("#empInfo_update select").val([employee.departmentId]);
+    				
+    			
+    			});
+    			$("#updatebtn").attr("emp-id",empid)//为更新按钮绑定员工ID
+    			$("#update_modal").modal({
+    				backdrop:'static'
+    			})
+    		})
+    		
+    		
+    		
+    		//绑定保存提交事件
     		$("#savebtn").click(function(){
     			
     			//前端校验
@@ -190,6 +267,27 @@
     				}
     			});
     		});
+    		
+    		
+    		//点击保存更新
+    		$("#updatebtn").click(function(){
+    			var empId = $(this).attr("emp-id");
+    			 $.ajax({
+    					url:"${APP_PATH}/employee/update/"+empId,
+    					type:"PUT", //...............
+    					data: $('#empInfo_update').serialize(),				
+    					success:function(result){
+    						if(result.state == 200){
+    	    					//关闭模态框
+    	    					$("#update_modal").modal('hide');
+    	    					to_page(currentPage);//以总记录数作为页数...    						
+    						}else{
+    							alert("信息填写错误，自己认真检查一下，烦啊")
+    						}
+    					}
+    				});
+    		});
+    		
     	}
     	
     	function reset_form(ele){
@@ -259,12 +357,14 @@
 			}
 		}
     	
-    	function setDepts(){
+    	function setDepts(ele){
+    		
     		
     		$.get("${APP_PATH}/department/list",function(result){
     			
     			var depts = result.data.depts;
-    			var deptsel = $('#deptList');
+    			var deptsel = $(ele);
+    			deptsel.empty();
     			depts.forEach(function(val){
     				$('<option></option>').append(val.name).attr("value",val.id).appendTo(deptsel);
     			});

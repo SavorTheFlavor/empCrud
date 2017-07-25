@@ -41,8 +41,57 @@ public class EmployeeController {
 		}
 	}
 	
+	
+	/**
+	 * 如果直接发送ajax=PUT形式的请求
+	 * 封装的数据
+	 * 除路径上的empId其他的全为Null
+	 * 问题:
+	 * 请求体中有数据:
+	 * 但是Employee对象封装不上
+	 *  update tbl_emp    where emp_id = 1014 
+	 *  
+	 *  原因:Tomcat:
+	 *  1.将请求体中的数据,封装一个map.
+	 *  2.request.getparameter("empName")就会从这个map中取值
+	 *  3.SpringMVC封装POJO对象的时候
+	 *  	会把POJO中中每个属性的值调用request.getparameter("email");
+	 *  AJAX发送PUT请求引发的血案
+	 *  PUT请求，请求体中的数据,request.getparameter("email),拿不到数据
+	 *  Tomcat一看是PUT请求不会封装请求体中的数据为map,只有POST形式的请求才封装请求体为map
+	 *  org.apache.catalina.connector.Request ; 
+	 *  protected String parseBodyMethods = "POST"
+	 *  if(!getConnector().isParseBodyMethod(getMethod())){
+	 *  		success = true;
+	 *  		return ;
+	 *  }
+	 *  
+	 *   
+	 *  
+	 */
+	
+	/**解决方案 
+	 * 我们要能支持直接发送PUT之类的请求还要封装请求体中的数据
+	 * 1.配上HttpPutFormContentFilter
+	 * 2.他的作用:将请求提中的数据解析包装成一个map. request被重新包装
+	 * 3.request被重新包装:request.getparameter被()重写,就会从自己封装的map中取数据
+	 * 员工更新方法
+	 * @param employee
+	 * @return
+	 */
+	@RequestMapping(value="/update/{id}",method=RequestMethod.PUT)
+	public @ResponseBody Message updateEmployee(Employee e){
+		employeeService.update(e);
+		return Message.success();
+	}
+	
+	/**
+	 * paging query employees
+	 * @param pn
+	 * @return
+	 */
 	@RequestMapping("/list/{pn}")
-	public @ResponseBody Message queryEmployees(@PathVariable(name="pn")Integer pn, Model model){
+	public @ResponseBody Message queryEmployees(@PathVariable(name="pn")Integer pn){
 		
 		PageHelper.startPage(pn,5);//起始页，每页记录数
 		//从此处开始拦截sql，并加入分页功能
@@ -53,7 +102,26 @@ public class EmployeeController {
 		return Message.success().addObject("pageInfo",pageInfo);
 	}
 	
+	/**
+	 * 根据id查询员工
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value="/info/{id}",method=RequestMethod.GET)
+	public @ResponseBody Message getEmployee(@PathVariable(name="id")Integer id){
+		
+		Employee e = employeeService.getEmployee(id);
+		
+		return Message.success().addObject("emp",e);
+	}
 	
+
+	
+	/**
+	 * checkEmail
+	 * @param email
+	 * @return
+	 */
 	@RequestMapping(value="/email",method=RequestMethod.POST)
 	public @ResponseBody Message checkEmail(@RequestParam("email") String email){
 		
@@ -63,6 +131,8 @@ public class EmployeeController {
 			return Message.success();
 		}
 	}
+	
+	
 	
 	/**
 	 * 检查用户名是否可用
