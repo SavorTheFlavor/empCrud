@@ -85,6 +85,17 @@
     delete from emp
     where id = #{id,jdbcType=INTEGER}
   </delete>
+  
+  <delete id="deleteBatch" parameterType="java.util.List">
+  	delete from emp 
+  	where id in(
+  		<foreach collection="list" item="item" separator=",">
+  			#{item}
+  		</foreach>
+  	)
+  </delete>
+  
+  
   <insert id="insert" parameterType="com.me.crud.bean.Employee">
     insert into emp (id, name, gender, 
       email, department_id)

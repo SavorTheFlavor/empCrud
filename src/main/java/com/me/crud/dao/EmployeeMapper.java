@@ -9,6 +9,8 @@ import com.me.crud.bean.Employee;
 @Repository
 public interface EmployeeMapper {
     int deleteByPrimaryKey(Integer id);
+    
+    int deleteBatch(List<Integer> ids);
 
     int insert(Employee record);
 

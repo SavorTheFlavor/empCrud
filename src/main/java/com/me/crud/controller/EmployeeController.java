@@ -41,6 +41,25 @@ public class EmployeeController {
 		}
 	}
 	
+	/**
+	 * 删除员工
+	 * @param ids
+	 * 1
+	 * 1-2-4-5
+	 * @return
+	 */
+	@RequestMapping(value="/delete/{ids}",method=RequestMethod.DELETE)
+	public @ResponseBody Message deleteByID(@PathVariable("ids")String ids){
+		
+		try{
+			int id = Integer.parseInt(ids);
+			return employeeService.deleteById(id);
+		}catch(Exception e){//出现异常说明是批量删除....
+			return employeeService.deleBatch(ids);
+		}
+
+	}
+	
 	
 	/**
 	 * 如果直接发送ajax=PUT形式的请求

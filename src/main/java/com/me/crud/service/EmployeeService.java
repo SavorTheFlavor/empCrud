@@ -1,5 +1,6 @@
 package com.me.crud.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,26 @@ public class EmployeeService {
 		}catch(Exception exception){
 			return Message.failure().addObject("errormsg", exception.getMessage());
 		}
+		return Message.success();
+	}
+	
+	public Message deleteById(Integer id){
+		employeeMapper.deleteByPrimaryKey(id);
+		return Message.success();
+	}
+	
+	/**
+	 * ids: 1-2-3-4
+	 * @param ids
+	 * @return
+	 */
+	public Message deleBatch(String ids){
+		List<Integer> idList = new ArrayList<>();
+		String[] str_ids = ids.split("-");
+		for (String id : str_ids) {
+			idList.add(Integer.parseInt(id));
+		}
+		employeeMapper.deleteBatch(idList);
 		return Message.success();
 	}
 	

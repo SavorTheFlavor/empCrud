@@ -31,7 +31,7 @@
 		<div class="row">
 			<div class="col-md-4 col-md-offset-8">
 				<button class="btn btn-primary btn-lg" id="emp_create" >Create</button>
-				<button class="btn btn-danger btn-lg">Delete</button>
+				<button class="btn btn-danger btn-lg" id="emp_delete_all">Delete</button>
 			</div>
 		</div>
 		
@@ -226,7 +226,6 @@
     				$("#updateEmail").val(employee.email);
     				$("#empInfo_update input[name=gender]").val([employee.gender]);
     				$("#empInfo_update select").val([employee.departmentId]);
-    				
     			
     			});
     			$("#updatebtn").attr("emp-id",empid)//为更新按钮绑定员工ID
@@ -234,6 +233,23 @@
     				backdrop:'static'
     			})
     		})
+    		
+    		//绑定删除事件
+    		$(document).on("click",".delete_btn",function(){
+    			var empName = $(this).parents("tr").find("td:eq(2)").text();
+    			var empId = $(this).attr("del-id");
+    			if(confirm("delete ["+empName+"]?")){
+    				$.ajax({
+    					url:"${APP_PATH}/employee/delete/"+empId,
+    					type:"DELETE",
+    					success:function(result){
+    						to_page(currentPage);
+    					}
+    					
+    				})
+    				
+    			}
+    		});
     		
     		
     		
@@ -287,6 +303,46 @@
     					}
     				});
     		});
+    		
+    		
+    		//绑定CheckBox选中事件
+    			//全选/全不选
+    		$("#check_all").click(function(){
+    			//attr获取checked是undefined 
+    			//我们这些dom原生的属性:attr获取自定义属性的值,prop获取原生的值
+    			//alert($(this).prop("checked"));
+    			$(".check_item").prop("checked",$(this).prop("checked"));
+    		});
+    		
+    		//check_item
+    		$(document).on("click",".check_item",function(){
+    			var flag = $(".check_item:checked").length == $(".check_item").length;
+    			$("#check_all").prop("checked",flag)
+    		})
+    		
+    		//绑定大删除按钮事件
+    		$("#emp_delete_all").click(function(){
+    			var empName = "-->"
+    			var empId = "";
+    			$.each($(".check_item:checked"),function(){
+    				empName += $(this).parents("tr").find("td:eq(2)").text() + ",";	
+    				empId += $(this).parents("tr").find("td:eq(1)").text()+"-";
+    			});
+    			//员工姓名字符串
+    			empName = empName.substring(0, empName.length - 1 );
+    			//员工id字符串
+    			empId = empId.substring(0, empId.length - 1 );
+    			empName += "<-- ?";
+    			if(confirm("delete "+empName)){
+    				$.ajax({
+    					url:"${APP_PATH}/employee/delete/"+empId,
+    					type:"DELETE",
+    					success:function(result){
+    						to_page(currentPage);
+    					}
+    				})
+    			}
+    		})
     		
     	}
     	
